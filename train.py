@@ -5,11 +5,13 @@ import pygame
 from agent import Agent
 from replay import ReplayRecord
 
-EPISODE_LEN = 100
-STEP_REWARD_FACTOR = 0.01
+EPISODE_LEN = 1000
+STEP_REWARD_FACTOR = 0.5
 EPOCH_REWARD_FACTOR = 100
 INPUT_SIZE = 2
 OUTPUT_SIZE = 2
+
+EPOCH_INTERVAL=50
 
 def train(epochs: int, path=None, load_model=False, model_path=None) :
     agent = Agent(INPUT_SIZE, OUTPUT_SIZE, load_model, model_path)
@@ -48,10 +50,11 @@ def train(epochs: int, path=None, load_model=False, model_path=None) :
         epoch_rewards = int(info['score']) * EPOCH_REWARD_FACTOR
         trajectory_reward += epoch_rewards
 
-        agent.Log("Epoch {}/{} | Finished ! the reward this epoch is : {}.".format(ep+1, epochs, epoch_rewards))
+        if (ep+1) % EPOCH_INTERVAL == 0 :
+            agent.Log("Epoch {}/{} | Finished ! the reward this epoch is : {}.".format(ep+1, epochs, trajectory_reward))
 
-        if (ep+1) % 10 == 0 :
-            agent.Save(path)
+        #if (ep+1) % 10 == 0 :
+        #    agent.Save(path)
 
     if epochs % 10 != 0 :
         agent.Save(path)
@@ -59,4 +62,4 @@ def train(epochs: int, path=None, load_model=False, model_path=None) :
 
 
 if __name__ == '__main__' :
-    train(100, load_model=False, model_path='./model/model.h5')
+    train(200001, 'test.h5', load_model=False, model_path='./model/model.h5')

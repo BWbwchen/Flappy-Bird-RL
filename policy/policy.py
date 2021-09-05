@@ -5,7 +5,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 
 LR = 0.003
-LOG_INTERVAL = 1
+LOG_INTERVAL = 100
 
 class Policy:
 	def __init__(self, input, output, load_model=False, model_path=None) :
@@ -34,8 +34,8 @@ class Policy:
 			loss.backward()
 			self.optimizer.step()
 
-			if batch_idx % LOG_INTERVAL == 0 :
-				print("Train Epoch: {} [{}/{}], Loss: {:.6f}".format(epoch, batch_idx, len(recent_record_list), loss.item()))
+			#if batch_idx % LOG_INTERVAL == 0 :
+			#	print("Train Epoch: {} [{}/{}], Loss: {:.6f}".format(epoch, batch_idx, len(recent_record_list), loss.item()))
 
 	def Get_action(self, obs) :
 		obs = torch.tensor(obs).to(self.device)

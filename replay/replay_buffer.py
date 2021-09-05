@@ -7,4 +7,7 @@ class ReplayBuffer:
 		self.records.append(record)
 
 	def Recently_data(self, batch_size) :
-		return self.records[-batch_size:]
+		if batch_size >= len(self.records) :
+			return self.records
+		else :
+			return self.records[-batch_size:]
