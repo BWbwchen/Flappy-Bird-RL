@@ -1,3 +1,4 @@
+from numpy.core.defchararray import mod
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -7,10 +8,14 @@ LR = 0.003
 LOG_INTERVAL = 1
 
 class Policy:
-	def __init__(self, input, output) :
+	def __init__(self, input, output, load_model=False, model_path=None) :
 		self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 		self.net = Net(input, output).to(self.device)
+		if load_model :
+			self.net.load_state_dict(torch.load(model_path))
+			print("Load model Finish !")
+
 		self.optimizer = optim.Adadelta(self.net.parameters(), lr=LR)
 		self.loss = nn.CrossEntropyLoss()
 
@@ -43,7 +48,8 @@ class Policy:
 		return output.detach().cpu().numpy()
 
 	def Save(self, filePath) :
-		print("Save In ", filePath)
+		torch.save(self.net.state_dict(), filePath)
+		print("Save model in : ", filePath)
 
 class Net(nn.Module) :
 	def __init__(self, input, output) :

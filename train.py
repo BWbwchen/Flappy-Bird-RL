@@ -1,5 +1,6 @@
 import time
 import flappy_bird_gym
+from numpy.lib.npyio import load
 import pygame
 from agent import Agent
 from replay import ReplayRecord
@@ -10,8 +11,8 @@ EPOCH_REWARD_FACTOR = 100
 INPUT_SIZE = 2
 OUTPUT_SIZE = 2
 
-def train(epochs: int, path: str) :
-    agent = Agent(INPUT_SIZE, OUTPUT_SIZE)
+def train(epochs: int, path=None, load_model=False, model_path=None) :
+    agent = Agent(INPUT_SIZE, OUTPUT_SIZE, load_model, model_path)
     env = flappy_bird_gym.make("FlappyBird-v0")
     
     for ep in range(epochs):
@@ -47,30 +48,8 @@ def train(epochs: int, path: str) :
             agent.Save(path)
 
     agent.Save(path)
-    exit()
-
-
-    while True:
-        # Next action:
-        # (feed the observation to your agent here)
-
-        action = human_action()
-
-        # Processing:
-        obs, reward, done, info = env.step(action)
-        
-        # Rendering the game:
-        # (remove this two lines during training)
-        env.render()
-        time.sleep(1 / 30)  # FPS
-        
-        # Checking if the player is still alive
-        if done:
-            print("You died!")
-            break
-
     env.close()
 
 
 if __name__ == '__main__' :
-    train(2, './model.h5')
+    train(2, load_model=False, model_path='./model/model.h5')
