@@ -20,6 +20,8 @@ def train(epochs: int, path=None, load_model=False, model_path=None) :
 
         record = ReplayRecord()
 
+        trajectory_reward = 0
+
         for episode in range(EPISODE_LEN):
             # collect trajectory
             agent_action = agent.Act(obs)
@@ -29,6 +31,8 @@ def train(epochs: int, path=None, load_model=False, model_path=None) :
             # record trajectory
             step_reward *= STEP_REWARD_FACTOR
             record.Add(obs=obs, acts=actions_distribution)
+
+            trajectory_reward += step_reward
 
             if done:
                 break
@@ -42,14 +46,17 @@ def train(epochs: int, path=None, load_model=False, model_path=None) :
 
 
         epoch_rewards = int(info['score']) * EPOCH_REWARD_FACTOR
+        trajectory_reward += epoch_rewards
+
         agent.Log("Epoch {}/{} | Finished ! the reward this epoch is : {}.".format(ep+1, epochs, epoch_rewards))
 
         if (ep+1) % 10 == 0 :
             agent.Save(path)
 
-    agent.Save(path)
+    if epochs % 10 != 0 :
+        agent.Save(path)
     env.close()
 
 
 if __name__ == '__main__' :
-    train(2, load_model=False, model_path='./model/model.h5')
+    train(100, load_model=False, model_path='./model/model.h5')
